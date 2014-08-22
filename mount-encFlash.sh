@@ -10,6 +10,7 @@ drive_uuid=""
 drive_mount=""
 enc_mount=""
 tc_filename=""
+fs=""
 
 if [ $EUID -ne 0 ]; then
 	exec sudo -- "$0" "$@"
@@ -18,13 +19,13 @@ if [ "$1" == "mount" ]; then
 	echo "Mounting..."
 	mkdir -p $drive_mount
 	mkdir -p $enc_mount
-	mount -t ntfs-3g -o rw -U $drive_uuid $drive_mount
+	mount -t $fs -o rw -U $drive_uuid $drive_mount
 	if [ $? -ne 0 ]; then
 		echo "Drive mounting failed."
 		exit
 	fi
 	cryptsetup --type tcrypt open $drive_mount/$tc_filename usbenc
-	mount -t ntfs-3g -o rw /dev/mapper/usbenc $enc_mount
+	mount -t $fs -o rw /dev/mapper/usbenc $enc_mount
 	if [ $? -ne 0 ]; then
 		echo "Failed to mount TrueCrypt container."
 		echo "Finished with errors."
