@@ -9,7 +9,7 @@ STATUS=$2
 user=
 ping_test=
 
-if [ "$INT" == "wlp2s0" -a "$STATUS" == "up" ] || [ "$INT" == "eth0" -a "$STATUS" == "up" ] ; then
+if [ "$INT" == "wlp2s0" -a "$STATUS" == "up" ] || [ "$INT" == "enp3s0" -a "$STATUS" == "up" ] ; then
         # Define all exit values here. Entires must be added to NetworkManager, after they are added you can retreive their uuid with: nmcli con show
         exit1='' # To demonstrate the configurability of the server pool, this exit is left out by default
         exit2=''
@@ -49,7 +49,7 @@ if [ "$INT" == "wlp2s0" -a "$STATUS" == "up" ] || [ "$INT" == "eth0" -a "$STATUS
         nmcli con show uuid $choice | grep STATE | grep activated > /dev/null
         if [ $? -eq 0 ]; then
                 # Set display and DBUS env values so root can display the KDE pop-up properly
-                export $(cat /home/$user/.dbus/session-bus/* | grep DBUS_SESSION_BUS_ADDRESS)
+                export $(cat /home/$user/.dbus/session-bus/* | grep DBUS_SESSION_BUS_ADDRESS=)
                 export DISPLAY=:0
                 su -c "kdialog --passivepopup 'Your exit address is in $exit. \nYour ip is: $ip \nYour hostname is: $hostname' 8 --title 'VPN Connected!' --icon='object-locked'" $user
         fi
