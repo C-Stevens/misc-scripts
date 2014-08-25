@@ -17,15 +17,15 @@ if [ $EUID -ne 0 ]; then # Check if the user is running script as root. If not, 
 fi
 if [ "$1" == "mount" ]; then
 	echo "Mounting..."
-	mkdir -p $drive_mount
-	mkdir -p $enc_mount
-	mount -t $fs -o rw -U $drive_uuid $drive_mount
+	mkdir -p "$drive_mount"
+	mkdir -p "$enc_mount"
+	mount -t "$fs" -o rw -U "$drive_uuid" "$drive_mount"
 	if [ $? -ne 0 ]; then
 		echo "Drive mounting failed."
 		exit 1
 	fi
-	cryptsetup --type tcrypt open $drive_mount/$tc_filename usbenc
-	mount -t $fs -o rw /dev/mapper/usbenc $enc_mount
+	cryptsetup --type tcrypt open "$drive_mount"/"$tc_filename" usbenc
+	mount -t "$fs" -o rw /dev/mapper/usbenc "$enc_mount"
 	if [ $? -ne 0 ]; then
 		echo "Failed to mount TrueCrypt container."
 		echo "Finished with errors."
@@ -35,7 +35,7 @@ if [ "$1" == "mount" ]; then
 
 elif [ "$1" == "unmount" ]; then
 	echo "Unmounting..."
-	umount $enc_mount
+	umount "$enc_mount"
 	if [ $? -ne 0 ]; then
 		echo "Failed to unmount drive."
 		exit 1
@@ -43,7 +43,7 @@ elif [ "$1" == "unmount" ]; then
 	sleep 1 # Sleep buffers to give drives time to properly unmount and clean up
 	cryptsetup close usbenc
 	sleep 1
-	umount $drive_mount
+	umount "$drive_mount"
 	if [ $? -ne 0 ]; then
 		echo "Failed to unmount TrueCrypt container."
 		echo "Finished with errors."
