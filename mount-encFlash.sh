@@ -41,9 +41,8 @@ case "$1" in
 			echo "Failed to unmount drive."
 			exit 1
 		fi
-		sleep 1 # Sleep buffers to give drives time to properly unmount and clean up
+		sleep 1 # Sleep buffer to avoid device-mapper "resource busy" error
 		cryptsetup close usbenc
-		sleep 1
 		umount "$drive_mount"
 		if [ $? -ne 0 ]; then
 			echo "Failed to unmount TrueCrypt container."
