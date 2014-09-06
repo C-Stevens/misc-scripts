@@ -6,7 +6,7 @@
 #    msmtp-mta
 
 currentIp=$(cat ~/ip.log)
-grabbedIp=$(wget -O - -q -nv --delete-after www.icanhazip.com)
+grabbedIp=$(curl https://icanhazip.com 2>/dev/null)
 email="mail@yourdomain.com"
 if [ "$currentIp" != "$grabbedIp" -n -a "$grabbedIp" ] ;
 then
