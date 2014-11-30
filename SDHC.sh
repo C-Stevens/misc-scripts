@@ -20,7 +20,7 @@ case "$1" in
 	[bB]ackup )
 		echo "Creating SDHC image..."
 		name=$(date | sed 's/ /-/g')
-		dd if="$card_mount" of="$img_dir/$(date | sed 's/ /-/g').img"
+		dd if="$card_mount" of="$img_dir/$name.img"
 		if [ $? -ne 0 ]; then
 			echo "Failed to create image"
 			exit 1
