@@ -42,13 +42,13 @@ if [ "$INT" == "wlp2s0" -a "$STATUS" == "up" ] || [ "$INT" == "enp3s0" -a "$STAT
         elif [ "$choice" = "$exit4" ]; then
                 exit="The Fourth Exit country"
         fi
-        # Gather pop-up data
-        ip=$(curl https://icanhazip.com 2>/dev/null)
-        hostname=$(dig -x "$ip" +short)
         # Check if the vpn connection is activated
         nmcli con show uuid $choice | grep STATE | grep activated > /dev/null
         if [ $? -eq 0 ]; then
-                # Set display and DBUS env values so root can display the KDE pop-up properly
+	        # Gather pop-up data
+		ip=$(curl https://icanhazip.com 2>/dev/null)
+	        hostname=$(dig -x "$ip" +short)
+		# Set display and DBUS env values so root can display the KDE pop-up properly
                 export $(cat /home/$user/.dbus/session-bus/* | grep DBUS_SESSION_BUS_ADDRESS=)
                 export DISPLAY=:0
                 su -c "kdialog --passivepopup 'Your exit address is in $exit. \nYour ip is: $ip \nYour hostname is: $hostname' 8 --title 'VPN Connected!' --icon='object-locked'" $user
