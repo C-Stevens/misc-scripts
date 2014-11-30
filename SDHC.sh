@@ -11,7 +11,7 @@ case "$1" in
 	[bB]ackup )
 		echo "Creating SDHC image..."
 		name=$(date | sed 's/ /-/g')
-		dd if=$card_mount of="$img_dir/$(date | sed 's/ /-/g').img"
+		dd if="$card_mount" of="$img_dir/$(date | sed 's/ /-/g').img"
 		if [ $? -ne 0 ]; then
 			echo "Failed to create image"
 			exit 1
@@ -27,14 +27,14 @@ case "$1" in
 		fi
 		if [ "$2" == "-f" ]; then
 			echo "Flashing $3 to SDHC..."
-			dd if=$img_dir/$3 of=$card_mount
+			dd if="$img_dir/$3" of="$card_mount"
 			if [ $? -ne 0 ]; then
 				echo "Failed to flash card"
 				exit 1
 			fi
 		else
 			echo "Flashing $2 to SDHC..."
-			dd if=$img_dir/$2 of=$card_mount
+			dd if="$img_dir/$2" of="$card_mount"
 			if [ $? -ne 0 ]; then
 				echo "Failed to flash card"
 				exit 1
