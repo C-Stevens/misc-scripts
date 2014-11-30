@@ -3,6 +3,15 @@
 card_mount="" # Location of SDHC (e.g /dev/sdb)
 img_dir="" # Location of saved SDHC images
 
+if [ -z $card_mount ]; then
+	echo "card_mount path not specified. Exiting..."
+	exit 1
+fi
+if [ -z $img_dir ]; then
+	echo "img_dir path not specified. Exiting..."
+	exit 1;
+fi
+
 if [ $EUID -ne 0 ]; then # Run as root if not already
 	exec sudo -- "$0" "$@"
 fi
