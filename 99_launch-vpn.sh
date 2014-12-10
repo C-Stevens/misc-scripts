@@ -11,8 +11,7 @@ ping_test= # URL to ping for verifying internet connectivity
 idle_time= # Amount of time (in seconds) to wait before retrying the vpn connection upon ping failure
 interfacePool=() # Pool of interfaces to check
 
-checkInterfaces()
-{
+checkInterfaces() {
 	for (( i=0; i<${#interfacePool[@]}; i++ )); do
 		if [ "${interfacePool[$i]}" == "$INT" -a "$STATUS" == "up" ]; then
 			return 0
@@ -21,7 +20,7 @@ checkInterfaces()
 	return 1 # Return 1 if $INT isn't int the interface pool or NetworkManager reports it down
 }
 
-if $(checkInterfaces) ; then # If one of the interfaces goes up
+if checkInterfaces ; then # If one of the interfaces goes up
         # Define all exit values here. Entires must be added to NetworkManager, after they are added you can retreive their uuid with: nmcli con show
         exit1='' # To demonstrate the configurability of the server pool, this exit is left out by default
         exit2=''
