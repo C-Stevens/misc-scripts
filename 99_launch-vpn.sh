@@ -6,10 +6,22 @@
 
 INT=$1
 STATUS=$2
-user=
-ping_test=
+nuser= # User to issue dialoge as
+ping_test= # URL to ping for verifying internet connectivity
+idle_time= # Amount of time (in seconds) to wait before retrying the vpn connection upon ping failure
+interfacePool=() # Pool of interfaces to check
 
-if [ "$INT" == "wlp2s0" -a "$STATUS" == "up" ] || [ "$INT" == "enp3s0" -a "$STATUS" == "up" ] ; then
+checkInterfaces()
+{
+	for (( i=0; i<${#interfacePool[@]}; i++ )); do
+		if [ "${interfacePool[$i]}" == "$INT" -a "$STATUS" == "up" ]; then
+			return 0
+		fi
+	done
+	return 1 # Return 1 if $INT isn't int the interface pool or NetworkManager reports it down
+}
+
+if $(checkInterfaces) ; then # If one of the interfaces goes up
         # Define all exit values here. Entires must be added to NetworkManager, after they are added you can retreive their uuid with: nmcli con show
         exit1='' # To demonstrate the configurability of the server pool, this exit is left out by default
         exit2=''
@@ -25,7 +37,7 @@ if [ "$INT" == "wlp2s0" -a "$STATUS" == "up" ] || [ "$INT" == "enp3s0" -a "$STAT
                         nmcli con up uuid $choice
                         break
                 else
-                        sleep 1
+                        sleep $idle_time
                         continue
                 fi
         done
@@ -51,6 +63,6 @@ if [ "$INT" == "wlp2s0" -a "$STATUS" == "up" ] || [ "$INT" == "enp3s0" -a "$STAT
 		# Set display and DBUS env values so root can display the KDE pop-up properly
                 export $(cat /home/$user/.dbus/session-bus/* | grep DBUS_SESSION_BUS_ADDRESS=)
                 export DISPLAY=:0
-                su -c "kdialog --passivepopup 'Your exit address is in $exit. \nYour ip is: $ip \nYour hostname is: $hostname' 8 --title 'VPN Connected!' --icon='object-locked'" $user
+                su -c "kdialog --passivepopup 'Your exit address is in $exit. \nYour ip is: $ip \nYour hostname is: $hostname' 8 --title 'VPN Connected!' --icon='object-locked'" $nuser
         fi
 fi
