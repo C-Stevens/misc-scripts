@@ -17,7 +17,7 @@ checkInterfaces() {
 			return 0
 		fi
 	done
-	return 1 # Return 1 if $INT isn't int the interface pool or NetworkManager reports it down
+	return 1 # Return 1 if $INT isn't in the interface pool or NetworkManager reports it down
 }
 
 if checkInterfaces ; then # If one of the interfaces goes up
