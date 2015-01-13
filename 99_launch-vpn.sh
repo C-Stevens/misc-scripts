@@ -3,7 +3,7 @@
 ## Launches a vpn at random from the specified pool, clears out old vpn tun0 cruft from
 ## NetworkManager, then gives  a small popup in KDE with helpful network information and
 ## a connection success message.
-
+set -x
 INT=$1
 STATUS=$2
 nuser= # User to issue dialoge as
@@ -54,14 +54,23 @@ if checkInterfaces ; then # If one of the interfaces goes up
                 exit="The Fourth Exit country"
         fi
         # Check if the vpn connection is activated
+	sleep 3
         nmcli con show uuid $choice | grep STATE | grep activated > /dev/null
         if [ $? -eq 0 ]; then
-	        # Gather pop-up data
+		# Gather pop-up data
 		ip=$(curl https://icanhazip.com 2>/dev/null)
 	        hostname=$(dig -x "$ip" +short)
+		if [ -z $hostname ]; then
+			hostname="Hostname could not be determined"
+		else
+			hostname="Your hostname is: <b>$hostname</b>"
+		fi
 		# Set display and DBUS env values so root can display the KDE pop-up properly
-                export $(cat /home/$user/.dbus/session-bus/* | grep DBUS_SESSION_BUS_ADDRESS=)
-                export DISPLAY=:0
-                su -c "kdialog --passivepopup 'Your exit address is in $exit. \nYour ip is: $ip \nYour hostname is: $hostname' 8 --title 'VPN Connected!' --icon='object-locked'" $nuser
+		dbus_session_file=/home/$nuser/.dbus/session-bus/$(cat /var/lib/dbus/machine-id)-0
+		if [ -e "$dbus_session_file" ]; then
+			. "$dbus_session_file"
+			export DBUS_SESSION_BUS_ADDRESS DBUS_SESSION_BUS_PID
+		fi
+		su -c "notify-send -t 5000 --icon=object-locked 'VPN Connected!' 'Your exit address is in <b>$exit</b><br>Your ip is: <b>$ip</b><br>$hostname'" $nuser
         fi
 fi
