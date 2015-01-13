@@ -3,7 +3,6 @@
 ## Launches a vpn at random from the specified pool, clears out old vpn tun0 cruft from
 ## NetworkManager, then gives  a small popup in KDE with helpful network information and
 ## a connection success message.
-set -x
 INT=$1
 STATUS=$2
 nuser= # User to issue dialoge as
