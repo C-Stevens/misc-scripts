@@ -9,17 +9,36 @@ nuser= # User to issue dialoge as
 ping_test= # URL to ping for verifying internet connectivity
 idle_time= # Amount of time (in seconds) to wait before retrying the vpn connection upon ping failure
 interfacePool=() # Pool of interfaces to check
+ssidBlacklist=() # Pool of SSIDs that the VPN should not connect over
 
 checkInterfaces() {
+	# Returns 1 if $INT isn't in the interface pool of NetworkManager reports it down.
+	# Returns 0 if $INT is in the interface pool and is reported as up in $STATUS
 	for (( i=0; i<${#interfacePool[@]}; i++ )); do
 		if [ "${interfacePool[$i]}" == "$INT" -a "$STATUS" == "up" ]; then
 			return 0
 		fi
 	done
-	return 1 # Return 1 if $INT isn't in the interface pool or NetworkManager reports it down
+	return 1
 }
 
-if checkInterfaces ; then # If one of the interfaces goes up
+checkSSID() {
+	# Returns 1 if the machine has connected to a blacklisted SSID and VPN connection should not be made, or SSID cannot be determined
+	# Returns 0 if the machine is not connected to a blacklisted SSID and can connect to VPN
+	currentSSID=$(nmcli con show | grep -v -- "--" | tail -1 | awk '{print $1}')
+	if [ ! -z $currentSSID ]; then
+		for(( i=0; i<${#ssidBlacklist[@]}; i++ )); do
+			if [ "${ssidBlacklist[$i]}" == "$currentSSID" ]; then
+				return 1
+			fi
+		done
+		return 0
+	else # If the SSID cannot be determined, stay safe and do not connect to VPN
+		return 1
+	fi
+}
+
+if checkInterfaces && checkSSID; then # If one of the interfaces goes up and the SSID we're connected to isn't blacklisted
         # Define all exit values here. Entires must be added to NetworkManager, after they are added you can retreive their uuid with: nmcli con show
         exit1='' # To demonstrate the configurability of the server pool, this exit is left out by default
         exit2=''
@@ -53,7 +72,7 @@ if checkInterfaces ; then # If one of the interfaces goes up
                 exit="The Fourth Exit country"
         fi
         # Check if the vpn connection is activated
-	sleep 3
+	sleep 3 # Buffer to allow NetworkManager to get finished
         nmcli con show uuid $choice | grep STATE | grep activated > /dev/null
         if [ $? -eq 0 ]; then
 		# Gather pop-up data
