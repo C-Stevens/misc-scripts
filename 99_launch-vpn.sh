@@ -1,8 +1,8 @@
 #!/bin/bash
-# Place in /etc/NetworkManager/dispatcher.d/, the script *must* be set to executable!
+# Place in /etc/NetworkManager/dispatcher.d/, the script *must* be set to executable and root owned!
 ## Launches a vpn at random from the specified pool, clears out old vpn tun0 cruft from
-## NetworkManager, then gives  a small popup in KDE with helpful network information and
-## a connection success message.
+## NetworkManager, then gives  a small popup with helpful network information and a
+## connection success message.
 INT=$1
 STATUS=$2
 nuser= # User to issue dialoge as
@@ -83,7 +83,7 @@ if checkInterfaces && checkSSID; then # If one of the interfaces goes up and the
 		else
 			hostname="Your hostname is: <b>$hostname</b>"
 		fi
-		# Set display and DBUS env values so root can display the KDE pop-up properly
+		# Set display and DBUS env values so root can display the pop-up properly
 		dbus_session_file=/home/$nuser/.dbus/session-bus/$(cat /var/lib/dbus/machine-id)-0
 		if [ -e "$dbus_session_file" ]; then
 			. "$dbus_session_file"
