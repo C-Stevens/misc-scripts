@@ -1,0 +1,48 @@
+#!/bin/bash
+# Place in /usr/bin/ and set executable to run straight from the terminal.
+# Saves your tired fingers the same ssh tunnel over and over.
+red='\033[1;31m' # Light red
+green='\033[1;32m' # Light green
+NC='\033[0m' # No color
+
+tunnel_cmd="" # Tunnel command to be run (probably of the form ssh -N -f -L xxxx:localhost:xxxx user@host)
+
+case "$1" in
+	up)
+		echo $"Launching ssh tunnel..."
+		ps aux | grep -v grep | grep "$tunnel_cmd"
+		if [ $? -eq 1 ]; then # There's no tunnel already
+			$tunnel_cmd
+			if [ $? -eq 0 ]; then
+				echo -e $"${green}Tunnel created.${NC}"
+			else
+				echo -e $"${red}Failed to create tunnel.${NC}"
+				exit 1
+			fi
+		else
+			echo -e $"${red}Failed to create tunnel.${NC}\nTunnel is already up"
+			exit 1
+		fi
+	;;
+	down)
+		echo $"Killing tunnel..."
+		kill $(pgrep -a ssh | grep "$tunnel_cmd" | awk '{print $1}')
+		if [ $? -eq 0 ]; then
+			echo -e $"${green}Tunnel killed.${NC}"
+		else
+			echo -e $"${green}Failed to kill tunnel.${NC}"
+		fi
+	;;
+	status)
+		ps aux | grep -v grep | grep "$tunnel_cmd"
+		if [ $? -eq 0 ]; then
+			echo -e $"Tunnel is ${green}up${NC}."
+		else
+			echo -e $"Tunnel is ${red}not up${NC}."
+		fi
+	;;
+	*)
+		echo -e $"Invalid parameters.\n\tUsage: $0 {up|down|status}"
+		exit 1
+	;;
+esac
