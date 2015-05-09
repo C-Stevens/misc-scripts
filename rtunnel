@@ -1,6 +1,6 @@
 #!/bin/bash
 # Place in /usr/bin/ and set executable to run straight from the terminal.
-# Saves your tired fingers the same ssh tunnel over and over.
+# Saves your tired fingers from entering the same ssh tunnel command over and over.
 red='\033[1;31m' # Light red
 green='\033[1;32m' # Light green
 NC='\033[0m' # No color
