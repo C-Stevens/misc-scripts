@@ -30,7 +30,7 @@ case "$1" in
 		if [ $? -eq 0 ]; then
 			echo -e $"${green}Tunnel killed.${NC}"
 		else
-			echo -e $"${green}Failed to kill tunnel.${NC}"
+			echo -e $"${red}Failed to kill tunnel.${NC}"
 		fi
 	;;
 	status)
