@@ -1,6 +1,6 @@
 #!/bin/bash
 # Usage:
-#	bash ./mount-encFlash.sh unmount/mount
+#	bash ./mount-encFlash.sh {mount|unmount}
 # Simple script to (dis)mount a flash drive based on uuid and
 # then (dis)mount a TrueCrypt container on that drive's root.
 # This script requires the user running it to either be root,
