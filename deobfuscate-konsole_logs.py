@@ -11,6 +11,7 @@
 #   * The script/user has read access to these files, and write access to the working directory
 #   * The user only wants to preserve characters in the ASCII set, and disregard all other bytes
 #   * The user wishes for the unobfuscated files to be saved out into the working directory
+
 import os, fnmatch, re
 
 infiles = []
@@ -35,7 +36,7 @@ for i in infiles:
 # Strip non-ASCII bytes from bytestring , strip excess spaces, and place in tuple position [1]
 for i in rawFiles:
     try:
-        parsedFiles.append((i[0], re.sub(' +',' ',''.join(filter(lambda x: x.lower() in keepChars, i[0])))))
+        parsedFiles.append((i[0], re.sub(' +',' ',''.join(filter(lambda x: x.lower() in keepChars, i[1])))))
     except:
         print("Error parsing {0}.".format(i[0].name))
         pass
