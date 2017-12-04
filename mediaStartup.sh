@@ -87,8 +87,6 @@ function mountDrive {
         fi
         echo "Done"
         echo -en "\tMounting the device... "
-
-        echo "mount /dev/mapper/$driveName $driveMountPath -o defaults,error=remount-ro"
         mount /dev/mapper/$driveName $driveMountPath -o defaults,errors=remount-ro
         if [ $? -ne 0 ]; then
                 return 1 # Return failure code
